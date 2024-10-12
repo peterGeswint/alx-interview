@@ -1,6 +1,21 @@
 #!/usr/bin/python3
+"""
+Module to check if all boxes can be unlocked.
+"""
+
 
 def canUnlockAll(boxes):
+
+    """
+    Determines if all boxes can be unlocked.
+
+    Args:
+        boxes(list of lists):list of lists where list contain key to boxes.
+
+    Returns:
+        bool: True if all boxes can be unlocked, False otherwise.
+    """
+
     # Start by marking the first box (index 0) as unlocked
     unlocked = {0}
 
