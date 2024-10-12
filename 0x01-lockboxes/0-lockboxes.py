@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 def canUnlockAll(boxes):
     # Start by marking the first box (index 0) as unlocked
     unlocked = {0}
