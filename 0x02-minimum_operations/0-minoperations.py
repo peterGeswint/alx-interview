@@ -3,16 +3,17 @@
 Module for calculating minimum operations to achieve n 'H' characters.
 """
 
+
 def minOperations(n):
     """
-    Calculates the fewest number of operations needed to get exactly n 'H' characters.
-    
+    Calculates the fewest number operations needed get n 'H' characters.
+
     :param n: The number of 'H' characters desired.
     :return: The minimum number of operations required.
     """
     if n <= 1:
         return 0
-    
+
     operations = 0
     factor = 2
 
@@ -22,5 +23,5 @@ def minOperations(n):
             operations += factor
             n //= factor
         factor += 1
-    
+
     return operations
