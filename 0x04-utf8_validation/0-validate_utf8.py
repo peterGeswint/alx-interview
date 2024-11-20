@@ -1,5 +1,12 @@
 #!/usr/bin/python3
 
+"""
+Module for validating UTF-8 encoding.
+
+This module provides a single function:
+    - validUTF8(data): Validates UTF-8 encoding for a given dataset.
+"""
+
 def validUTF8(data):
     """
     Validate if the given data set represents a valid UTF-8 encoding.
