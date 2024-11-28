@@ -1,41 +1,32 @@
-#!/usr/bin/python3
-"""
-This script prints all characters of a Star Wars movie in the same order
-as they appear in the "characters" list in the /films/ endpoint.
-"""
+#!/usr/bin/node
 
-import requests
-import sys
+const request = require('request');
 
-def get_characters(movie_id):
-    """
-    Retrieves and prints all characters of the specified Star Wars movie.
-    
-    Args:
-        movie_id (int): The ID of the Star Wars movie.
-    """
-    url = f"https://swapi.dev/api/films/{movie_id}/"
-    response = requests.get(url)
-    
-    if response.status_code != 200:
-        print("Movie not found")
-        return
-    
-    movie_data = response.json()
-    characters = movie_data.get("characters", [])
-    
-    for character_url in characters:
-        character_response = requests.get(character_url)
-        if character_response.status_code == 200:
-            character_data = character_response.json()
-            print(character_data.get("name"))
+if (process.argv.length !== 3) {
+  console.log('Usage: ./0-starwars_characters.js <Movie ID>');
+  process.exit(1);
+}
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: ./0-starwars_characters.py <Movie ID>")
-    else:
-        try:
-            movie_id = int(sys.argv[1])
-            get_characters(movie_id)
-        except ValueError:
-            print("Movie ID must be an integer")
+const movieId = process.argv[2];
+const url = `https://swapi.dev/api/films/${movieId}/`;
+
+request(url, (error, response, body) => {
+  if (error) {
+    console.error(error);
+    return;
+  }
+  if (response.statusCode !== 200) {
+    console.log('Movie not found');
+    return;
+  }
+  const characters = JSON.parse(body).characters;
+  characters.forEach(characterUrl => {
+    request(characterUrl, (error, response, body) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      console.log(JSON.parse(body).name);
+    });
+  });
+});
