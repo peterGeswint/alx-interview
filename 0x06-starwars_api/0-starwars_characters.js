@@ -1,35 +1,41 @@
-#!/usr/bin/node
+#!/usr/bin/python3
+"""
+This script prints all characters of a Star Wars movie in the same order
+as they appear in the "characters" list in the /films/ endpoint.
+"""
 
-const request = require('request');
+import requests
+import sys
 
-// Get the movie ID from the command-line arguments
-const movieId = process.argv[2];
+def get_characters(movie_id):
+    """
+    Retrieves and prints all characters of the specified Star Wars movie.
+    
+    Args:
+        movie_id (int): The ID of the Star Wars movie.
+    """
+    url = f"https://swapi.dev/api/films/{movie_id}/"
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        print("Movie not found")
+        return
+    
+    movie_data = response.json()
+    characters = movie_data.get("characters", [])
+    
+    for character_url in characters:
+        character_response = requests.get(character_url)
+        if character_response.status_code == 200:
+            character_data = character_response.json()
+            print(character_data.get("name"))
 
-// The URL of the Star Wars API for the given movie
-const url = `https://swapi.dev/api/films/${movieId}/`;
-
-// Send a GET request to the API
-request(url, function (error, response, body) {
-  if (error) {
-    console.log('Error:', error);
-    return;
-  }
-
-  // Parse the response body to a JavaScript object
-  const movieData = JSON.parse(body);
-
-  // Iterate over the "characters" array and print each character's name
-  movieData.characters.forEach(function (characterUrl) {
-    // For each character URL, send a GET request to get the character's data
-    request(characterUrl, function (error, response, body) {
-      if (error) {
-        console.log('Error:', error);
-        return;
-      }
-
-      // Parse the character's data and print the character's name
-      const characterData = JSON.parse(body);
-      console.log(characterData.name);
-    });
-  });
-});
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: ./0-starwars_characters.py <Movie ID>")
+    else:
+        try:
+            movie_id = int(sys.argv[1])
+            get_characters(movie_id)
+        except ValueError:
+            print("Movie ID must be an integer")
