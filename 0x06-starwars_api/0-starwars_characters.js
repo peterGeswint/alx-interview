@@ -20,13 +20,21 @@ request(url, (error, response, body) => {
     return;
   }
   const characters = JSON.parse(body).characters;
-  characters.forEach(characterUrl => {
-    request(characterUrl, (error, response, body) => {
+
+  const fetchCharacter = (url, index) => {
+    request(url, (error, response, body) => {
       if (error) {
         console.error(error);
         return;
       }
       console.log(JSON.parse(body).name);
+      if (index < characters.length - 1) {
+        fetchCharacter(characters[index + 1], index + 1);
+      }
     });
-  });
+  };
+
+  if (characters.length > 0) {
+    fetchCharacter(characters[0], 0);
+  }
 });
