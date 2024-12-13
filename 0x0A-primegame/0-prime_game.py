@@ -2,10 +2,10 @@ def isWinner(x, nums):
     if not nums or x < 1:
         return None
 
-    # Helper function to generate primes up to max_n
-    def sieve_of_eratosthenes(max_n):
+    # Helper to calculate primes using Sieve of Eratosthenes
+    def sieve(max_n):
         is_prime = [True] * (max_n + 1)
-        is_prime[0] = is_prime[1] = False  # 0 and 1 are not prime
+        is_prime[0] = is_prime[1] = False
         for i in range(2, int(max_n**0.5) + 1):
             if is_prime[i]:
                 for j in range(i * i, max_n + 1, i):
@@ -13,9 +13,9 @@ def isWinner(x, nums):
         return is_prime
 
     max_num = max(nums)
-    primes = sieve_of_eratosthenes(max_num)
+    primes = sieve(max_num)
 
-    # Precompute the number of primes up to each number
+    # Precompute prime counts
     prime_counts = [0] * (max_num + 1)
     for i in range(1, max_num + 1):
         prime_counts[i] = prime_counts[i - 1] + (1 if primes[i] else 0)
@@ -24,7 +24,7 @@ def isWinner(x, nums):
     ben_wins = 0
 
     for n in nums:
-        if prime_counts[n] % 2 == 1:  # Maria wins if odd number of primes
+        if prime_counts[n] % 2 == 1:
             maria_wins += 1
         else:
             ben_wins += 1
@@ -35,4 +35,3 @@ def isWinner(x, nums):
         return "Ben"
     else:
         return None
-
