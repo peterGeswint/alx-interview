@@ -1,59 +1,65 @@
+#!/usr/bin/python3
 def isWinner(x, nums):
     """
-    Determine the winner of the Prime Game.
-
-    Parameters:
-    x (int): The number of rounds to be played.
-    nums (list): A list where each element is the maximum number (n) for a round.
-
+    Determine the winner of the game.
+    
+    Args:
+    x (int): Number of rounds.
+    nums (List[int]): List of 'n' values for each round.
+    
     Returns:
-    str: "Maria" if Maria wins more rounds, "Ben" if Ben wins more rounds, or
-         None if there's no overall winner.
+    str: Name of the player that won the most rounds (either 'Maria' or 'Ben').
     """
-    if not nums or x < 1:
+    
+    def sieve_of_eratosthenes(n):
+        """Generate a list of prime numbers up to n using the Sieve of Eratosthenes."""
+        primes = [True] * (n+1)
+        p = 2
+        while p**2 <= n:
+            if primes[p]:
+                for i in range(p**2, n+1, p):
+                    primes[i] = False
+            p += 1
+        return [p for p in range(2, n+1) if primes[p]]
+    
+    def play_game(n, primes):
+        """Simulate the game and return the winner ('Maria' or 'Ben')."""
+        numbers = set(range(1, n+1))
+        turn = 0  # 0 for Maria, 1 for Ben
+        
+        for prime in primes:
+            if prime > n:
+                break
+            if prime in numbers:
+                multiples = set(range(prime, n+1, prime))
+                numbers.difference_update(multiples)
+                turn = 1 - turn  # Switch turns
+        
+        return 'Maria' if turn == 1 else 'Ben'
+    
+    if x <= 0 or not nums:
         return None
-
-    def sieve(max_n):
-        """
-        Generate a list of boolean values indicating primality for numbers 0 to max_n.
-
-        Parameters:
-        max_n (int): The maximum number up to which to calculate primes.
-
-        Returns:
-        list: A list where index i is True if i is prime, otherwise False.
-        """
-        is_prime = [True] * (max_n + 1)
-        is_prime[0] = is_prime[1] = False  # 0 and 1 are not prime
-        for i in range(2, int(max_n**0.5) + 1):
-            if is_prime[i]:
-                for j in range(i * i, max_n + 1, i):
-                    is_prime[j] = False
-        return is_prime
-
-    # Get the maximum value in nums to optimize prime calculations
-    max_num = max(nums)
-    primes = sieve(max_num)
-
-    # Precompute the cumulative count of primes up to each number
-    prime_counts = [0] * (max_num + 1)
-    for i in range(1, max_num + 1):
-        prime_counts[i] = prime_counts[i - 1] + (1 if primes[i] else 0)
-
+    
+    max_n = max(nums)
+    primes = sieve_of_eratosthenes(max_n)
+    
     maria_wins = 0
     ben_wins = 0
-
+    
     for n in nums:
-        # Determine the winner for each round
-        if prime_counts[n] % 2 == 1:  # Odd prime count -> Maria wins
+        winner = play_game(n, primes)
+        if winner == 'Maria':
             maria_wins += 1
-        else:  # Even prime count -> Ben wins
+        else:
             ben_wins += 1
-
-    # Determine the overall winner
+    
     if maria_wins > ben_wins:
-        return "Maria"
+        return 'Maria'
     elif ben_wins > maria_wins:
-        return "Ben"
+        return 'Ben'
     else:
         return None
+
+# Test the function
+if __name__ == "__main__":
+    print("Winner: {}".format(isWinner(5, [2, 5, 1, 4, 3])))  # Example output: Ben
